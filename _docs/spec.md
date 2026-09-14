@@ -1,4 +1,6 @@
-# Expense Splitter — Specification
+# WeSplit — Specification
+
+*(Expense Splitter app)*
 
 ## Scope
 - Multi-group support (e.g. "Trip to Japan", "Apartment 4B")
