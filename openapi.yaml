@@ -1,0 +1,571 @@
+openapi: 3.0.3
+info:
+  title: WeSplit API
+  description: Backend API for the WeSplit expense splitter app.
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: /api
+
+security: []
+
+paths:
+  # ── People ──────────────────────────────────────────────
+  /people:
+    get:
+      operationId: getPeople
+      summary: List all people in the shared pool
+      responses:
+        "200":
+          description: List of people
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Person"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createPerson
+      summary: Add a new person to the shared pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePerson"
+      responses:
+        "201":
+          description: Created person
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /people/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: updatePerson
+      summary: Update a person's name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePerson"
+      responses:
+        "200":
+          description: Updated person
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deletePerson
+      summary: Delete a person
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Groups ──────────────────────────────────────────────
+  /groups:
+    get:
+      operationId: getGroups
+      summary: List all groups
+      responses:
+        "200":
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Group"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createGroup
+      summary: Create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGroup"
+      responses:
+        "201":
+          description: Created group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /groups/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getGroup
+      summary: Get a group by ID
+      responses:
+        "200":
+          description: Group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateGroup
+      summary: Update a group's name and members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGroup"
+      responses:
+        "200":
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteGroup
+      summary: Delete a group and its expenses/settlements
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Group Members ───────────────────────────────────────
+  /groups/{groupId}/members/{personId}:
+    parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: personId
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: addGroupMember
+      summary: Add a person to a group
+      responses:
+        "200":
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: removeGroupMember
+      summary: Remove a person from a group
+      responses:
+        "200":
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Expenses ────────────────────────────────────────────
+  /groups/{groupId}/expenses:
+    parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getExpenses
+      summary: List expenses for a group
+      responses:
+        "200":
+          description: List of expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Expense"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createExpense
+      summary: Create an expense in a group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExpense"
+      responses:
+        "201":
+          description: Created expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /expenses/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getExpense
+      summary: Get an expense by ID
+      responses:
+        "200":
+          description: Expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateExpense
+      summary: Update an expense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateExpense"
+      responses:
+        "200":
+          description: Updated expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteExpense
+      summary: Delete an expense
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Settlements ─────────────────────────────────────────
+  /groups/{groupId}/settlements:
+    parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getSettlements
+      summary: List settlements for a group
+      responses:
+        "200":
+          description: List of settlements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Settlement"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    post:
+      operationId: createSettlement
+      summary: Record a settlement in a group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSettlement"
+      responses:
+        "201":
+          description: Created settlement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settlement"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /settlements/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      operationId: deleteSettlement
+      summary: Delete a settlement
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ── Balances ────────────────────────────────────────────
+  /groups/{groupId}/balances:
+    parameters:
+      - name: groupId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getBalances
+      summary: Get pairwise balances for a group
+      responses:
+        "200":
+          description: List of pairwise balances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Balance"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+components:
+  responses:
+    NotFound:
+      description: Resource not found
+    BadRequest:
+      description: Invalid request
+
+  schemas:
+    Person:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    CreatePerson:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    UpdatePerson:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    Group:
+      type: object
+      required: [id, name, memberIds]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        memberIds:
+          type: array
+          items:
+            type: string
+
+    CreateGroup:
+      type: object
+      required: [name, memberIds]
+      properties:
+        name:
+          type: string
+        memberIds:
+          type: array
+          items:
+            type: string
+
+    UpdateGroup:
+      type: object
+      required: [name, memberIds]
+      properties:
+        name:
+          type: string
+        memberIds:
+          type: array
+          items:
+            type: string
+
+    SplitConfig:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [equal, fixed, percentage]
+        values:
+          type: object
+          additionalProperties:
+            type: number
+          description: "Member ID -> amount (fixed) or percentage"
+
+    Expense:
+      type: object
+      required: [id, groupId, description, amount, date, category, notes, payerIds, split]
+      properties:
+        id:
+          type: string
+        groupId:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date
+        category:
+          type: string
+          enum: [food, transport, lodging, entertainment, utilities, other]
+        notes:
+          type: string
+        payerIds:
+          type: array
+          items:
+            type: string
+        split:
+          $ref: "#/components/schemas/SplitConfig"
+
+    CreateExpense:
+      type: object
+      required: [description, amount, date, category, notes, payerIds, split]
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date
+        category:
+          type: string
+          enum: [food, transport, lodging, entertainment, utilities, other]
+        notes:
+          type: string
+        payerIds:
+          type: array
+          items:
+            type: string
+        split:
+          $ref: "#/components/schemas/SplitConfig"
+
+    UpdateExpense:
+      type: object
+      required: [description, amount, date, category, notes, payerIds, split]
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date
+        category:
+          type: string
+          enum: [food, transport, lodging, entertainment, utilities, other]
+        notes:
+          type: string
+        payerIds:
+          type: array
+          items:
+            type: string
+        split:
+          $ref: "#/components/schemas/SplitConfig"
+
+    Settlement:
+      type: object
+      required: [id, groupId, fromPersonId, toPersonId, amount, date]
+      properties:
+        id:
+          type: string
+        groupId:
+          type: string
+        fromPersonId:
+          type: string
+        toPersonId:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date
+
+    CreateSettlement:
+      type: object
+      required: [fromPersonId, toPersonId, amount, date]
+      properties:
+        fromPersonId:
+          type: string
+        toPersonId:
+          type: string
+        amount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date
+
+    Balance:
+      type: object
+      required: [fromPersonId, toPersonId, amount]
+      properties:
+        fromPersonId:
+          type: string
+        toPersonId:
+          type: string
+        amount:
+          type: number
+          format: double
+          description: Positive amount that fromPersonId owes toPersonId
