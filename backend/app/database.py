@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import Column, Float, ForeignKey, String, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -53,7 +54,7 @@ class SettlementRow(Base):
     date = Column(String, nullable=False)
 
 
-DATABASE_URL = "sqlite:///./wesplit.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./wesplit.db")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 
