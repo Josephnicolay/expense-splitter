@@ -1,7 +1,6 @@
 import type { ExpenseSplitterAPI } from "./api";
-import { MockAPI } from "./mock";
+import { HttpAPI } from "./http";
 
-// Swap this import to switch implementations
-const api: ExpenseSplitterAPI = new MockAPI();
+const api: ExpenseSplitterAPI = new HttpAPI();
 
 export default api;

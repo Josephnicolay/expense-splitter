@@ -1,0 +1,24 @@
+[project]
+name = "wesplit-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Josephnicolay", email = "joseph.ruiz@udea.edu.co" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "sqlalchemy>=2.0.53",
+    "uvicorn>=0.53.0",
+]
+
+[project.scripts]
+wesplit-api = "wesplit_api:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
